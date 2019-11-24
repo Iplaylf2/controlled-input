@@ -1,0 +1,31 @@
+{
+  "name": "controlled-input",
+  "version": "1.0.0",
+  "description": "controlled input",
+  "main": "index.js",
+  "types": "index",
+  "scripts": {
+    "start": "npx webpack-dev-server --config webpack.dev.js",
+    "build-cjs": "npx webpack --config webpack.cjs.js",
+    "build-umd": "npx webpack --config webpack.umd.js"
+  },
+  "keywords": [],
+  "author": "IplayLF2",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/react": "^16.9.11",
+    "@types/react-dom": "^16.9.4",
+    "clean-webpack-plugin": "^3.0.0",
+    "css-loader": "^3.2.0",
+    "html-webpack-plugin": "^3.2.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "style-loader": "^1.0.0",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.7.2",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0",
+    "webpack-merge": "^4.2.2"
+  }
+}
