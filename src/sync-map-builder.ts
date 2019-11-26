@@ -1,29 +1,39 @@
-class SyncMiddleware<T, Context> {
-  constructor(handleList: SyncHandle<T, Context>[] = []) {
-    this.handleList = handleList;
+export class SyncMapBuilder<T, Context> {
+  static create<T, Context>(): SyncMapBuilder<T, Context> {
+    return new SyncMapBuilder(next => next, SyncMapBuilder.start);
   }
 
-  use(handle: SyncHandle<T, Context>): SyncMiddleware<T, Context> {
-    this.handleList.push(handle);
-    return this;
+  static start: SyncMapBuilder<any, any> = null as any;
+
+  constructor(
+    handle: SyncHandle<T, Context>,
+    lastBuilder: SyncMapBuilder<T, Context>
+  ) {
+    this.handle = handle;
+    this.lastBuilder = lastBuilder;
+  }
+
+  use(handle: SyncHandle<T, Context>): SyncMapBuilder<T, Context> {
+    return new SyncMapBuilder(handle, this);
   }
 
   build(context: Context): SyncMap<T> {
-    return this.handleList.reduce<SyncMap<T>>(
-      (next, handle) => handle(next, context),
-      v => v
-    );
+    return this.buildWithNext(context, v => v);
   }
 
-  branch(): SyncMiddleware<T, Context> {
-    return new SyncMiddleware(this.handleList.slice(0));
+  buildWithNext(context: Context, next: SyncMap<T>): SyncMap<T> {
+    const _next = this.handle(next, context);
+    return this.lastBuilder === SyncMapBuilder.start
+      ? _next
+      : this.lastBuilder.buildWithNext(context, _next);
   }
 
-  private handleList: SyncHandle<T, Context>[];
+  private handle: SyncHandle<T, Context>;
+  private lastBuilder: SyncMapBuilder<T, Context>;
 }
 
-type SyncMap<T> = (value: T) => T;
-type SyncHandle<T, Context> = (
+export type SyncMap<T> = (value: T) => T;
+export type SyncHandle<T, Context> = (
   next: SyncMap<T>,
   context: Context
 ) => SyncMap<T>;
