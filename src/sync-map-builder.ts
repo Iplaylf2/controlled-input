@@ -1,9 +1,12 @@
 export class SyncMapBuilder<T, Context> {
   static create<T, Context>(): SyncMapBuilder<T, Context> {
-    return new SyncMapBuilder(next => next, SyncMapBuilder.start);
+    return SyncMapBuilder.start;
   }
 
-  static start: SyncMapBuilder<any, any> = null as any;
+  static start = (self => {
+    self.lastBuilder = self;
+    return self;
+  })(new SyncMapBuilder<any, any>(next => next, null as any));
 
   constructor(
     handle: SyncHandle<T, Context>,
