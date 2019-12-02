@@ -15,6 +15,11 @@ const builder = AssignBuilder.create<{
     console.log("m2->", JSON.stringify(context));
     next({ c: true });
     console.log("<-m2", JSON.stringify(context));
+  })
+  .use((next: AssignNext<{ d: object }>) => context => {
+    console.log("m3->", JSON.stringify(context));
+    next({ d: {} });
+    console.log("<-m3", JSON.stringify(context));
   });
 
 const run = builder.build();
