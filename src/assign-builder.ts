@@ -1,12 +1,8 @@
 export class AssignBuilder<T extends Head, Head extends object> {
   static create<T extends object>(): AssignBuilder<T, T> {
     return new AssignBuilder<T, T>(assignNextSlot => context =>
-      assignNextSlot(context)()
+      (assignNextSlot(context) as any)()
     );
-  }
-
-  private constructor(assignRunSlot: AssignRunSlot) {
-    this.assignRunSlot = assignRunSlot;
   }
 
   use<K>(
@@ -17,7 +13,7 @@ export class AssignBuilder<T extends Head, Head extends object> {
     ) as any;
   }
 
-  build(): (source: Head) => T {
+  build(): (source: Head) => Head & Partial<T> {
     const assignRun = this.assignRunSlot(context => side =>
       Object.assign(context, side)
     );
@@ -46,10 +42,14 @@ export class AssignBuilder<T extends Head, Head extends object> {
       )(context);
   }
 
+  private constructor(assignRunSlot: AssignRunSlot) {
+    this.assignRunSlot = assignRunSlot;
+  }
+
   private assignRunSlot: AssignRunSlot;
 }
 
-export type AssignNext<T = undefined> = (side?: T) => void;
+export type AssignNext<T = undefined> = (side: T) => void;
 
 export type AssignMiddleware<T, K = undefined> = (
   assignNext: AssignNext<K>
