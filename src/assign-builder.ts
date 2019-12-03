@@ -13,7 +13,7 @@ export class AssignBuilder<T extends Head, Head extends object> {
     ) as any;
   }
 
-  build(): (source: Head) => Head & Partial<T> {
+  build(): (source: Head) => T {
     const assignRun = this.assignRunSlot(context => side =>
       Object.assign(context, side)
     );
