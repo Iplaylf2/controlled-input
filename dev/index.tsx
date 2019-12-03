@@ -11,7 +11,7 @@ const builder = AssignBuilder.create<{
     next({ b: 1 });
     console.log("<-m1", JSON.stringify(context));
   })
-  .use((next: AssignNext<{ c: boolean }>) => context => {
+  .use((next: AssignNext<{ c?: boolean }>) => context => {
     console.log("m2->", JSON.stringify(context));
     next({ c: true });
     console.log("<-m2", JSON.stringify(context));
