@@ -1,6 +1,6 @@
 export class ModifyBuilder<T> {
   static create<T>(): ModifyBuilder<T> {
-    return new ModifyBuilder(next => source => next(source));
+    return new ModifyBuilder(next => next);
   }
 
   use(middleware: ModifyMiddleware<T>): ModifyBuilder<T> {
