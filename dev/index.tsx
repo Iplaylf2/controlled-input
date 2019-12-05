@@ -1,30 +1,30 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import { AssignBuilder, AssignNext } from "../src/assign-builder";
+import { ModifyBuilder } from "../src/modify-builder";
+const foo = ModifyBuilder.create<{ test: number }>();
 
-const builder = AssignBuilder.create<{
-  a: string;
-}>()
-  .use((next: AssignNext<{ b: number }>) => context => {
+const bar = foo
+  .use(next => context => {
+    context.test += 10;
     console.log("m1->", JSON.stringify(context));
-    next({ b: 1 });
+    next(context);
     console.log("<-m1", JSON.stringify(context));
   })
-  .use((next: AssignNext<{ c?: boolean }>) => context => {
+  .use(next => context => {
+    context.test += 100;
     console.log("m2->", JSON.stringify(context));
-    next({ c: true });
+    next(context);
     console.log("<-m2", JSON.stringify(context));
   })
-  .use((next: AssignNext<{ d: object }>) => context => {
+  .use(next => context => {
+    context.test += 1000;
     console.log("m3->", JSON.stringify(context));
-    next({ d: {} });
+    next(context);
     console.log("<-m3", JSON.stringify(context));
   });
 
-const run = builder.build();
-console.log("run");
-console.dir(run);
-console.dir(run({ a: "aaa" }));
+const run = bar.build();
+console.log(run({ test: 8 }));
 
 ReactDOM.render(<div>dev</div>, document.getElementById("root"));
