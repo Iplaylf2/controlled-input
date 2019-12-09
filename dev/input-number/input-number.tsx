@@ -1,5 +1,6 @@
 import React, { useMemo, useEffect, useRef } from "react";
 import "./input-number.css";
+import { InputChange } from "../../src/input-change";
 
 export const InputNumber = function() {
   const inputRef = useRef<HTMLInputElement>({} as any);
@@ -20,8 +21,28 @@ export const InputNumber = function() {
       type="text"
       ref={inputRef}
       onChange={e => {
-        inputNumber({ text: e.target.value });
+        const target = e.target;
+
+        inputNumber({ text: target.value });
+
+        const textFrom = errorLastText;
+        const { value: textTo, selectionEnd: selectionTo } = target as any;
+
+        console.log(
+          JSON.stringify(
+            InputChange.create(
+              textFrom,
+              InputChange.getSelectionFrom(textFrom, textTo, selectionTo),
+              textTo,
+              selectionTo
+            )
+          )
+        );
+
+        errorLastText = textTo;
       }}
     ></input>
   );
 };
+
+let errorLastText: string = "";

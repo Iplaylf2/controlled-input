@@ -4,7 +4,7 @@ export class InputChange {
     const [longger, shorter] =
       lengthChange > 0 ? [textTo, textFrom] : [textFrom, textTo];
 
-    var i = 0;
+    let i = 0;
     for (; i !== shorter.length; i++) {
       if (longger.charAt(i) !== shorter.charAt(i)) {
         break;
@@ -38,7 +38,80 @@ export class InputChange {
     textTo: string,
     selectionTo: number
   ): InputChange {
-    throw "";
+    if (textFrom === textTo) {
+      return new InputChange(
+        textFrom,
+        textTo,
+        textFrom.length,
+        textTo.length,
+        "",
+        "",
+        InputChangeType.None
+      );
+    }
+
+    const lengthChange = textTo.length - textFrom.length;
+    if (textTo === "") {
+      const type =
+        lengthChange === -1 ? InputChangeType.Remove : InputChangeType.Clean;
+      return new InputChange(
+        textFrom,
+        textTo,
+        textFrom.length,
+        0,
+        textFrom,
+        "",
+        type
+      );
+    }
+
+    const limit = lengthChange > 0 ? selectionFrom : selectionTo;
+
+    let i = 0;
+    for (; i !== limit; i++) {
+      if (textFrom.charAt(i) !== textTo.charAt(i)) {
+        break;
+      }
+    }
+
+    if (textFrom.substring(selectionFrom) === textTo.substring(selectionTo)) {
+      let type: InputChangeType;
+      if (i === limit) {
+        switch (lengthChange) {
+          case -1:
+            type = InputChangeType.Remove;
+            break;
+          case 1:
+            type = InputChangeType.Append;
+            break;
+          default:
+            type = InputChangeType.Replace;
+            break;
+        }
+      } else {
+        type = InputChangeType.Replace;
+      }
+
+      return new InputChange(
+        textFrom,
+        textTo,
+        selectionFrom,
+        selectionTo,
+        textFrom.substring(i, selectionFrom),
+        textTo.substring(i, selectionTo),
+        type
+      );
+    } else {
+      return new InputChange(
+        textFrom,
+        textTo,
+        textFrom.length,
+        textTo.length,
+        textFrom.substring(i),
+        textTo.substring(i),
+        InputChangeType.Replace
+      );
+    }
   }
 
   constructor(
