@@ -1,27 +1,16 @@
 export class InputChange {
   static getSelection(textFrom: string, textTo: string): [number, number] {
-    const lengthChange = textTo.length - textFrom.length;
-    const [longger, shorter] =
-      lengthChange > 0 ? [textTo, textFrom] : [textFrom, textTo];
-
-    let i = 0;
-    for (; i !== shorter.length; i++) {
-      if (longger.charAt(i) !== shorter.charAt(i)) {
+    let i = textFrom.length - 1;
+    for (let j = textTo.length - 1; i >= 0 && j >= 0; i--, j--) {
+      if (textFrom.charAt(i) !== textTo.charAt(j)) {
         break;
       }
     }
 
-    if (i === 0) {
-      return [textFrom.length, textTo.length];
-    }
+    const selectionFrom = i + 1;
+    const selectionTo = textTo.length - (textFrom.length - selectionFrom);
 
-    if (longger.substring(i + lengthChange) === shorter.substring(i)) {
-      return lengthChange > 0 ? [i, i + lengthChange] : [i + lengthChange, i];
-    } else {
-      return lengthChange > 0
-        ? [i, textTo.length]
-        : [textFrom.length, textTo.length];
-    }
+    return [selectionFrom, selectionTo];
   }
 
   static getSelectionFrom(
@@ -29,12 +18,7 @@ export class InputChange {
     textTo: string,
     selectionTo: number
   ): number {
-    let i = textFrom.length - 1;
-    for (let j = textTo.length - 1; j <= selectionTo; i--, j--) {
-      if (textFrom.charAt(i) !== textTo.charAt(j)) break;
-    }
-
-    return i + 1;
+    return textFrom.length - (textTo.length - selectionTo);
   }
 
   static create(
