@@ -33,29 +33,23 @@ export class InputChange {
         textTo,
         selectionFrom,
         selectionTo,
-        0,
         "",
-        "",
-        InputChangeType.None
+        ""
       );
     }
 
-    const lengthChange = textTo.length - textFrom.length;
     if (textTo === "") {
-      const type =
-        lengthChange === -1 ? InputChangeType.Remove : InputChangeType.Clean;
       return new InputChange(
         textFrom,
         textTo,
         textFrom.length,
         0,
-        0,
         textFrom,
-        "",
-        type
+        ""
       );
     }
 
+    const lengthChange = textTo.length - textFrom.length;
     const limit = lengthChange > 0 ? selectionFrom : selectionTo;
 
     let i = 0;
@@ -65,32 +59,13 @@ export class InputChange {
       }
     }
 
-    let type: InputChangeType;
-    if (i === limit) {
-      switch (lengthChange) {
-        case -1:
-          type = InputChangeType.Remove;
-          break;
-        case 1:
-          type = InputChangeType.Append;
-          break;
-        default:
-          type = InputChangeType.Replace;
-          break;
-      }
-    } else {
-      type = InputChangeType.Replace;
-    }
-
     return new InputChange(
       textFrom,
       textTo,
-      i,
       selectionFrom,
       selectionTo,
       textFrom.substring(i, selectionFrom),
-      textTo.substring(i, selectionTo),
-      type
+      textTo.substring(i, selectionTo)
     );
   }
 
@@ -99,25 +74,55 @@ export class InputChange {
     textTo: string,
     selectionFrom: number,
     selectionTo: number,
-    changeIndex: number,
     changeFrom: string,
-    changeTo: string,
-    type: InputChangeType
+    changeTo: string
   ) {
     this.textFrom = textFrom;
     this.textTo = textTo;
     this.selectionFrom = selectionFrom;
     this.selectionTo = selectionTo;
-    this.changeIndex = changeIndex;
+    this.changeIndex = selectionTo - changeTo.length;
     this.changeFrom = changeFrom;
     this.changeTo = changeTo;
-    this.type = type;
+    this.type = this.detectType();
+  }
+
+  detectType(): InputChangeType {
+    if (this.textFrom === this.textTo) {
+      return InputChangeType.None;
+    }
+
+    if (this.textTo === "") {
+      if (this.changeFrom.length === 1) {
+        return InputChangeType.Remove;
+      } else {
+        return InputChangeType.Clean;
+      }
+    }
+
+    if (this.changeFrom.length === 0 && this.changeTo.length === 1) {
+      return InputChangeType.Append;
+    }
+
+    if (this.changeFrom.length === 1 && this.changeTo.length === 0) {
+      return InputChangeType.Remove;
+    }
+
+    return InputChangeType.Replace;
   }
 
   alterChangeTo(text: string) {
-    const lengthChange = text.length - this.changeTo.length;
+    if (text === this.changeTo) {
+      return;
+    }
+
+    this.textTo =
+      this.textTo.substring(0, this.changeIndex) +
+      text +
+      this.textTo.substring(this.selectionTo);
+    this.selectionTo = this.changeIndex + text.length;
     this.changeTo = text;
-    this.selectionTo += lengthChange;
+    this.type = this.detectType();
   }
 
   textFrom: string;
