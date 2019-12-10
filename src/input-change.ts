@@ -29,7 +29,12 @@ export class InputChange {
     textTo: string,
     selectionTo: number
   ): number {
-    return textFrom.length - (textTo.length - selectionTo);
+    let i = textFrom.length - 1;
+    for (let j = textTo.length - 1; j <= selectionTo; i--, j--) {
+      if (textFrom.charAt(i) !== textTo.charAt(j)) break;
+    }
+
+    return i + 1;
   }
 
   static create(
@@ -42,8 +47,9 @@ export class InputChange {
       return new InputChange(
         textFrom,
         textTo,
-        textFrom.length,
-        textTo.length,
+        selectionFrom,
+        selectionTo,
+        0,
         "",
         "",
         InputChangeType.None
@@ -58,6 +64,7 @@ export class InputChange {
         textFrom,
         textTo,
         textFrom.length,
+        0,
         0,
         textFrom,
         "",
@@ -74,44 +81,33 @@ export class InputChange {
       }
     }
 
-    if (textFrom.substring(selectionFrom) === textTo.substring(selectionTo)) {
-      let type: InputChangeType;
-      if (i === limit) {
-        switch (lengthChange) {
-          case -1:
-            type = InputChangeType.Remove;
-            break;
-          case 1:
-            type = InputChangeType.Append;
-            break;
-          default:
-            type = InputChangeType.Replace;
-            break;
-        }
-      } else {
-        type = InputChangeType.Replace;
+    let type: InputChangeType;
+    if (i === limit) {
+      switch (lengthChange) {
+        case -1:
+          type = InputChangeType.Remove;
+          break;
+        case 1:
+          type = InputChangeType.Append;
+          break;
+        default:
+          type = InputChangeType.Replace;
+          break;
       }
-
-      return new InputChange(
-        textFrom,
-        textTo,
-        selectionFrom,
-        selectionTo,
-        textFrom.substring(i, selectionFrom),
-        textTo.substring(i, selectionTo),
-        type
-      );
     } else {
-      return new InputChange(
-        textFrom,
-        textTo,
-        textFrom.length,
-        textTo.length,
-        textFrom.substring(i),
-        textTo.substring(i),
-        InputChangeType.Replace
-      );
+      type = InputChangeType.Replace;
     }
+
+    return new InputChange(
+      textFrom,
+      textTo,
+      i,
+      selectionFrom,
+      selectionTo,
+      textFrom.substring(i, selectionFrom),
+      textTo.substring(i, selectionTo),
+      type
+    );
   }
 
   constructor(
@@ -119,6 +115,7 @@ export class InputChange {
     textTo: string,
     selectionFrom: number,
     selectionTo: number,
+    changeIndex: number,
     changeFrom: string,
     changeTo: string,
     type: InputChangeType
@@ -127,9 +124,16 @@ export class InputChange {
     this.textTo = textTo;
     this.selectionFrom = selectionFrom;
     this.selectionTo = selectionTo;
+    this.changeIndex = changeIndex;
     this.changeFrom = changeFrom;
     this.changeTo = changeTo;
     this.type = type;
+  }
+
+  alterChangeTo(text: string) {
+    const lengthChange = text.length - this.changeTo.length;
+    this.changeTo = text;
+    this.selectionTo += lengthChange;
   }
 
   textFrom: string;
@@ -138,6 +142,7 @@ export class InputChange {
   selectionFrom: number;
   selectionTo: number;
 
+  changeIndex: number;
   changeFrom: string;
   changeTo: string;
 
