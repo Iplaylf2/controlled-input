@@ -4,7 +4,7 @@ import { InputNumber } from "./input-number";
 export type InputNumberContext = {
   change: InputChange;
   config: InputNumberConfig;
-  changeType: InputNumberChangeType;
+  adjust: InputNumberAdjustType;
   inputFrom: { input: InputNumber; valid: boolean };
   inputTo: { input: InputNumber; valid: boolean };
 };
@@ -16,9 +16,10 @@ export type InputNumberConfig = {
   precision: number;
 };
 
-export enum InputNumberChangeType {
+export enum InputNumberAdjustType {
   Native,
   Block,
   Complete,
+  Trim,
   Mutate
 }

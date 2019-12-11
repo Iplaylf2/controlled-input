@@ -8,9 +8,6 @@ export const IllegalFilter: ModifyMiddleware<InputNumberContext> = function(
   return context => {
     const { change } = context;
     switch (change.type) {
-      case InputChangeType.None:
-        context.inputTo = context.inputFrom;
-        return;
       case InputChangeType.Append:
       case InputChangeType.Replace:
         const afterFilter = change.changeTo.replace(/[^\-\.0-9]/g, "");
