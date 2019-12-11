@@ -81,13 +81,43 @@ export class InputChange {
     this.textTo = textTo;
     this.selectionFrom = selectionFrom;
     this.selectionTo = selectionTo;
-    this.changeIndex = selectionTo - changeTo.length;
     this.changeFrom = changeFrom;
     this.changeTo = changeTo;
+    this.changeIndex = this.detectChangeIndex();
     this.type = this.detectType();
   }
 
-  detectType(): InputChangeType {
+  alterChangeTo(text: string): void {
+    if (text === this.changeTo) {
+      return;
+    }
+
+    this.textTo =
+      this.textTo.substring(0, this.changeIndex) +
+      text +
+      this.textTo.substring(this.selectionTo);
+    this.selectionTo = this.changeIndex + text.length;
+    this.changeTo = text;
+    this.type = this.detectType();
+  }
+
+  textFrom: string;
+  textTo: string;
+
+  selectionFrom: number;
+  selectionTo: number;
+
+  changeFrom: string;
+  changeTo: string;
+
+  changeIndex: number;
+  type: InputChangeType;
+
+  private detectChangeIndex(): number {
+    return this.selectionTo - this.changeTo.length;
+  }
+
+  private detectType(): InputChangeType {
     if (this.textFrom === this.textTo) {
       return InputChangeType.None;
     }
@@ -110,32 +140,6 @@ export class InputChange {
 
     return InputChangeType.Replace;
   }
-
-  alterChangeTo(text: string) {
-    if (text === this.changeTo) {
-      return;
-    }
-
-    this.textTo =
-      this.textTo.substring(0, this.changeIndex) +
-      text +
-      this.textTo.substring(this.selectionTo);
-    this.selectionTo = this.changeIndex + text.length;
-    this.changeTo = text;
-    this.type = this.detectType();
-  }
-
-  textFrom: string;
-  textTo: string;
-
-  selectionFrom: number;
-  selectionTo: number;
-
-  changeIndex: number;
-  changeFrom: string;
-  changeTo: string;
-
-  type: InputChangeType;
 }
 
 export enum InputChangeType {
