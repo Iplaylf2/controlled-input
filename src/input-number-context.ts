@@ -1,10 +1,24 @@
 import { InputChange } from "./input-change";
 import { InputNumber } from "./input-number";
-import { InputNumberConfig } from "./input-number-config";
 
 export type InputNumberContext = {
   change: InputChange;
+  config: InputNumberConfig;
+  changeType: InputNumberChangeType;
   inputFrom: { input: InputNumber; valid: boolean };
   inputTo: { input: InputNumber; valid: boolean };
-  config: InputNumberConfig;
 };
+
+export type InputNumberConfig = {
+  max: number;
+  min: number;
+  step: number;
+  precision: number;
+};
+
+export enum InputNumberChangeType {
+  Native,
+  Block,
+  Complete,
+  Mutate
+}
