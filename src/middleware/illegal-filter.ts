@@ -14,14 +14,14 @@ export const IllegalFilter: ModifyMiddleware<InputNumberContext> = function(
       case InputChangeType.Append:
       case InputChangeType.Replace:
         const afterFilter = change.changeTo.replace(/[^\-\.0-9]/g, "");
-        if (afterFilter !== change.changeTo) {
-          change;
+        context.change.alterChangeTo(afterFilter);
+        if (context.change.type === InputChangeType.None) {
+          return;
         }
-        next(context);
         break;
       default:
-        next(context);
         break;
     }
+    next(context);
   };
 };
