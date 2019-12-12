@@ -19,7 +19,7 @@ export type InputNumberConfig = {
 export enum InputNumberAdjustType {
   Native,
   Block,
-  Complete,
   Trim,
+  Complete,
   Mutate
 }

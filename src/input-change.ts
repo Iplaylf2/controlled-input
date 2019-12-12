@@ -83,7 +83,7 @@ export class InputChange {
     this.selectionTo = selectionTo;
     this.changeFrom = changeFrom;
     this.changeTo = changeTo;
-    this.changeIndex = this.detectChangeIndex();
+    this.changeIndex = selectionTo - changeTo.length;
     this.type = this.detectType();
   }
 
@@ -101,21 +101,17 @@ export class InputChange {
     this.type = this.detectType();
   }
 
-  textFrom: string;
+  readonly textFrom: string;
   textTo: string;
 
-  selectionFrom: number;
+  readonly selectionFrom: number;
   selectionTo: number;
 
   changeFrom: string;
   changeTo: string;
 
-  changeIndex: number;
+  readonly changeIndex: number;
   type: InputChangeType;
-
-  private detectChangeIndex(): number {
-    return this.selectionTo - this.changeTo.length;
-  }
 
   private detectType(): InputChangeType {
     if (this.textFrom === this.textTo) {
