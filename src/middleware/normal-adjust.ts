@@ -2,7 +2,7 @@ import { ModifyMiddleware } from "../modify-builder";
 import { InputNumberContext } from "../input-number-context";
 import { InputChangeType } from "../input-change";
 
-export const IllegalFilter: ModifyMiddleware<InputNumberContext> = function(
+export const NormalAdjust: ModifyMiddleware<InputNumberContext> = function(
   next
 ) {
   return context => {
