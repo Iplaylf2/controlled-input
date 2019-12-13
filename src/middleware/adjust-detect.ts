@@ -9,7 +9,7 @@ export const AdjustDetect: ModifyMiddleware<InputNumberContext> = function(
   next
 ) {
   return context => {
-    const beforeAdjust = Object.assign({}, context.change);
+    const beforeAdjust = context.change.clone();
     next(context);
     const afterAdjust = context.change;
     if (beforeAdjust.textTo === afterAdjust.textTo) {

@@ -87,6 +87,10 @@ export class InputChange {
     this.type = this.detectType();
   }
 
+  clone(): InputChange {
+    return Object.assign({}, this);
+  }
+
   alterChangeTo(text: string): void {
     if (text === this.changeTo) {
       return;
