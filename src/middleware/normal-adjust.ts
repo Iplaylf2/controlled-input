@@ -20,10 +20,10 @@ export const NormalAdjust: ModifyMiddleware<InputNumberContext> = function(
 
         let filterDot: string;
         const dotIndex =
-          change.textFrom.length - context.inputFrom.input.fractional.length;
+          change.textFrom.length - context.inputFrom.input.fraction.length;
 
         if (
-          context.inputFrom.input.fractional.length > 0 &&
+          context.inputFrom.input.fraction.length > 0 &&
           dotIndex < change.changeIndex &&
           dotIndex >= change.selectionFrom
         ) {
