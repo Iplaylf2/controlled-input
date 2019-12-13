@@ -1,13 +1,65 @@
 import React, { useMemo, useEffect, useRef } from "react";
 import "./input-number.css";
+import { ModifyBuilder } from "../../src/modify-builder";
+import {
+  InputNumberContext,
+  InputNumberAdjustType
+} from "../../src/input-number-context";
+import {
+  AdjustDetect,
+  NormalAdjust,
+  GetInputNumberTo
+} from "../../src/middleware";
+import { InputNumber as InputNumberModel } from "../../src/input-number";
 import { InputChange } from "../../src/input-change";
 
 export const InputNumber = function() {
   const inputRef = useRef<HTMLInputElement>({} as any);
 
   const inputNumber = useMemo(() => {
-    return (status: { text: string }) => {
-      inputRef.current.value = status.text;
+    const inputMap = ModifyBuilder.create<InputNumberContext>()
+      .use(AdjustDetect)
+      .use(NormalAdjust)
+      .use(GetInputNumberTo)
+      .build();
+
+    let lastInput = {
+      valid: false,
+      input: InputNumberModel.createWhite()
+    };
+
+    const config = {
+      max: Infinity,
+      min: -Infinity,
+      precision: Infinity,
+      step: 1
+    };
+
+    return (status: { textTo: string; selectionTo: number }) => {
+      const context = inputMap({
+        change: InputChange.create(
+          lastInput.input.text,
+          InputChange.getSelectionFrom(
+            lastInput.input.text,
+            status.textTo,
+            status.selectionTo
+          ),
+          status.textTo,
+          status.selectionTo
+        ),
+        config,
+        adjust: InputNumberAdjustType.Native,
+        inputFrom: lastInput,
+        inputTo: {} as any
+      });
+
+      lastInput = context.inputTo;
+
+      inputRef.current.value = context.change.textTo;
+      inputRef.current.selectionEnd = context.change.selectionTo;
+      inputRef.current.selectionStart = context.change.selectionTo;
+
+      console.log(context);
     };
   }, []);
 
@@ -23,26 +75,10 @@ export const InputNumber = function() {
       onChange={e => {
         const target = e.target;
 
-        inputNumber({ text: target.value });
-
-        const textFrom = errorLastText;
         const { value: textTo, selectionEnd: selectionTo } = target as any;
 
-        console.log(
-          JSON.stringify(
-            InputChange.create(
-              textFrom,
-              InputChange.getSelectionFrom(textFrom, textTo, selectionTo),
-              textTo,
-              selectionTo
-            )
-          )
-        );
-
-        errorLastText = textTo;
+        inputNumber({ textTo, selectionTo });
       }}
     ></input>
   );
 };
-
-let errorLastText: string = "";
