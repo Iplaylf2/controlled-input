@@ -9,7 +9,9 @@ import {
   AdjustDetect,
   NonChange,
   NormalAdjust,
-  GetInputNumberTo
+  GetInputNumberTo,
+  KeepBorderAppend,
+  ValidDetect
 } from "../../src/middleware";
 import { InputNumber as InputNumberModel } from "../../src/input-number";
 import { InputChange } from "../../src/input-change";
@@ -23,6 +25,8 @@ export const InputNumber = function() {
       .use(NonChange)
       .use(NormalAdjust)
       .use(GetInputNumberTo)
+      .use(KeepBorderAppend)
+      .use(ValidDetect)
       .build();
 
     let lastInput = {
@@ -60,14 +64,8 @@ export const InputNumber = function() {
       inputRef.current.value = context.change.textTo;
       inputRef.current.selectionEnd = context.change.selectionTo;
       inputRef.current.selectionStart = context.change.selectionTo;
-
-      console.log(context);
     };
   }, []);
-
-  useEffect(() => {
-    console.log("render");
-  });
 
   return (
     <input
