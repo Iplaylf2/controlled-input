@@ -7,6 +7,7 @@ import {
 } from "../../src/input-number-context";
 import {
   AdjustDetect,
+  NonChange,
   NormalAdjust,
   GetInputNumberTo
 } from "../../src/middleware";
@@ -19,6 +20,7 @@ export const InputNumber = function() {
   const inputNumber = useMemo(() => {
     const inputMap = ModifyBuilder.create<InputNumberContext>()
       .use(AdjustDetect)
+      .use(NonChange)
       .use(NormalAdjust)
       .use(GetInputNumberTo)
       .build();
