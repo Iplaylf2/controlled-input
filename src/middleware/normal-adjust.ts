@@ -24,8 +24,7 @@ export const NormalAdjust: ModifyMiddleware<InputNumberContext> = function(
 
         if (
           context.inputFrom.input.fraction.length > 0 &&
-          dotIndex < change.changeIndex &&
-          dotIndex >= change.selectionFrom
+          (dotIndex < change.changeIndex || dotIndex >= change.selectionFrom)
         ) {
           filterDot = filterMinus.replace(/\./g, "");
         } else {
