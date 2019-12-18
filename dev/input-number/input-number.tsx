@@ -1,20 +1,22 @@
 import React, { useMemo, useEffect, useRef } from "react";
 import "./input-number.css";
-import { ModifyBuilder } from "../../src/modify-builder";
 import {
+  ModifyBuilder,
   InputNumberContext,
-  InputNumberAdjustType
-} from "../../src/input-number-context";
-import {
+  InputNumberAdjustType,
+  InputNumber as InputNumberModel,
+  InputChange,
+  MiddlewareList
+} from "../../src";
+
+const {
   AdjustDetect,
   NonChange,
   NormalAdjust,
   GetInputNumberTo,
   KeepBorderAppend,
   ValidDetect
-} from "../../src/middleware";
-import { InputNumber as InputNumberModel } from "../../src/input-number";
-import { InputChange } from "../../src/input-change";
+} = MiddlewareList;
 
 export const InputNumber = function() {
   const inputRef = useRef<HTMLInputElement>({} as any);
@@ -64,6 +66,8 @@ export const InputNumber = function() {
       inputRef.current.value = context.change.textTo;
       inputRef.current.selectionEnd = context.change.selectionTo;
       inputRef.current.selectionStart = context.change.selectionTo;
+
+      console.log(JSON.stringify(context));
     };
   }, []);
 
