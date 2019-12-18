@@ -21,9 +21,9 @@ export const ValidDetect: ModifyMiddleware<InputNumberContext> = function(
             shim = Math.pow(10, config.precision),
             shimValue = Math.round(Math.abs(value) * shim),
             shimStep = Math.round(config.step * shim),
-            q = Math.floor(shimValue / shimStep);
+            q = Math.floor(shimValue / shimStep),
+            vaildValue = (sign * (q * shimStep)) / shim;
 
-          const vaildValue = (sign * (q * shimStep)) / shim;
           inputTo.valid = vaildValue === value;
         } else {
           inputTo.valid = true;
@@ -32,25 +32,4 @@ export const ValidDetect: ModifyMiddleware<InputNumberContext> = function(
     }
     next(context);
   };
-};
-
-const getVaildValue = function(
-  value: number,
-  min: number,
-  max: number,
-  step: number,
-  precision: number
-): number {
-  if (value < min) {
-    return min;
-  } else if (value > max) {
-    return max;
-  } else {
-    const sign = Math.sign(value),
-      shim = Math.pow(10, precision),
-      shimValue = Math.round(Math.abs(value) * shim),
-      shimStep = Math.round(step * shim),
-      q = Math.floor(shimValue / shimStep);
-    return (sign * (q * shimStep)) / shim;
-  }
 };
