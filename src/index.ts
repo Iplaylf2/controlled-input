@@ -2,7 +2,8 @@ export { ModifyBuilder, ModifyNext, ModifyMiddleware } from "./modify-builder";
 export {
   InputNumberContext,
   InputNumberConfig,
-  InputNumberAdjustType
+  InputNumberAdjustType,
+  RegularInputNumber
 } from "./input-number-context";
 export { InputChange, InputChangeType } from "./input-change";
 export { InputNumber } from "./input-number";

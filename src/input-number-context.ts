@@ -5,8 +5,8 @@ export type InputNumberContext = {
   change: InputChange;
   config: InputNumberConfig;
   adjust: InputNumberAdjustType;
-  inputFrom: { input: InputNumber; valid: boolean };
-  inputTo: { input: InputNumber; valid: boolean };
+  inputFrom: RegularInputNumber;
+  inputTo: RegularInputNumber;
 };
 
 export type InputNumberConfig = {
@@ -23,3 +23,8 @@ export enum InputNumberAdjustType {
   Complete,
   Mutate
 }
+
+export type RegularInputNumber = {
+  input: InputNumber;
+  valid: boolean;
+};
