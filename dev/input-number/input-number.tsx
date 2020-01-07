@@ -41,7 +41,7 @@ export const InputNumber = function(props: {
     step: 1
   };
 
-  const expectRef = useRef<[RegularInputNumber, InputChange][]>([]);
+  const expectRef = useRef<[RegularInputNumber, number][]>([]);
 
   const lastInputRef = useRef<RegularInputNumber>(null as any);
   const shortLastInputRef = useRef<RegularInputNumber>(null as any);
@@ -57,13 +57,6 @@ export const InputNumber = function(props: {
       .use(KeepBorderAppend)
       .use(ValidDetect)
       .build();
-
-    lastInputRef.current = {
-      valid: false,
-      input: InputNumberModel.createWhite()
-    };
-
-    shortLastInputRef.current = lastInputRef.current;
 
     return (status: { textTo: string; selectionTo: number }) => {
       const lastInput = shortLastInputRef.current;
@@ -89,7 +82,7 @@ export const InputNumber = function(props: {
 
       shortLastInputRef.current = context.inputTo;
 
-      expectRef.current.push([context.inputTo, context.change]);
+      expectRef.current.push([context.inputTo, context.change.selectionTo]);
       props.onChange({
         text: context.inputTo.input.text,
         value: context.inputTo.input.value,
@@ -100,26 +93,38 @@ export const InputNumber = function(props: {
   }, [config.max, config.min, config.precision, config.step, props.onChange]);
 
   useEffect(() => {
-    const expect = expectRef.current.shift();
-    if (!expect) {
-      return;
-    }
-    const [inputTo, change] = expect;
-    if (props.value === inputTo.input.text) {
-      lastInputRef.current = inputTo;
+    expectRef.current.push([{ input: { text: null } } as any, 0]);
 
-      inputRef.current.value = change.textTo;
-      inputRef.current.selectionEnd = change.selectionTo;
-      inputRef.current.selectionStart = change.selectionTo;
-    } else {
+    lastInputRef.current = {
+      valid: false,
+      input: InputNumberModel.createWhite()
+    };
+
+    shortLastInputRef.current = lastInputRef.current;
+  }, [config.max, config.min, config.precision, config.step]);
+
+  useEffect(() => {
+    let [inputTo, selectionTo] = expectRef.current.shift() as any;
+
+    if (props.value !== inputTo.input.text) {
       expectRef.current = [];
       shortLastInputRef.current = lastInputRef.current;
       dispatchInput({
         textTo: props.value,
         selectionTo: props.value.length
       });
+      [inputTo, selectionTo] = expectRef.current.shift() as any;
+      if (props.value !== inputTo.input.text) {
+        return;
+      }
     }
-  }, [props.value]);
+
+    lastInputRef.current = inputTo;
+
+    inputRef.current.value = inputTo.input.text;
+    inputRef.current.selectionEnd = selectionTo;
+    inputRef.current.selectionStart = selectionTo;
+  }, [props.value, config.max, config.min, config.precision, config.step]);
 
   return (
     <input
