@@ -1,2 +1,1 @@
-import sth from "./type/index";
-export default sth;
+export * from "./type/index";
