@@ -8,7 +8,8 @@ import {
   InputNumberConfig as InputNumberConfigModel,
   RegularInputNumber,
   InputChange,
-  MiddlewareList
+  MiddlewareList,
+  InputChangeType
 } from "../../src";
 
 const {
@@ -67,6 +68,11 @@ export const InputNumber = function(props: {
         status.selectionTo
       );
 
+      //block
+      inputRef.current.value = lastInput.input.text;
+      inputRef.current.selectionEnd = selectionFrom;
+      inputRef.current.selectionStart = selectionFrom;
+
       const context = inputMap({
         change: InputChange.create(
           lastInput.input.text,
@@ -80,26 +86,29 @@ export const InputNumber = function(props: {
         inputTo: {} as any
       });
 
-      shortLastInputRef.current = context.inputTo;
-
-      expectRef.current.push([context.inputTo, context.change.selectionTo]);
       props.onChange({
         text: context.inputTo.input.text,
         value: context.inputTo.input.value,
         valid: context.inputTo.valid,
         change: adjust2change[context.adjust] as any
       });
+
+      if (context.change.type !== InputChangeType.None) {
+        shortLastInputRef.current = context.inputTo;
+        expectRef.current.push([context.inputTo, context.change.selectionTo]);
+      }
     };
   }, [config.max, config.min, config.precision, config.step, props.onChange]);
 
   useEffect(() => {
-    expectRef.current.push([{ input: { text: null } } as any, 0]);
-
-    lastInputRef.current = {
+    const white = {
       valid: false,
       input: InputNumberModel.createWhite()
     };
 
+    expectRef.current.push([white, 0]);
+
+    lastInputRef.current = white;
     shortLastInputRef.current = lastInputRef.current;
   }, [config.max, config.min, config.precision, config.step]);
 
