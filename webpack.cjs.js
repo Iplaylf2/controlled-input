@@ -4,7 +4,7 @@ const path = require("path");
 
 module.exports = merge(prod, {
   output: {
-    libraryTarget: "commonjs2",
+    libraryTarget: "commonjs",
     path: path.resolve(__dirname, "cjs")
   }
 });
